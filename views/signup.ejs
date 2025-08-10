@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Signup</title>
+  <!-- Bootstrap 5 CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* small polish */
+    .card { max-width: 520px; margin: 40px auto; }
+    .password-strength { font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title mb-3">Create an account</h4>
+
+        <form id="signupForm" method="post" action="/user">
+          <!-- Name -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Full name</label>
+            <input type="text" id="name" name="name" class="form-control" required minlength="2"
+                   aria-describedby="nameHelp" placeholder="Your full name">
+            <div id="nameHelp" class="form-text">Enter your full name (2+ characters).</div>
+            <div class="invalid-feedback">Please enter your name.</div>
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" id="email" name="email" class="form-control" required
+                   placeholder="you@example.com" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">We'll never share your email.</div>
+            <div class="invalid-feedback">Please enter a valid email address.</div>
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+              <input type="password" id="password" name="password" class="form-control" required
+                     minlength="8" aria-describedby="passwordHelp" placeholder="At least 8 characters">
+              <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Show password">
+                Show
+              </button>
+            </div>
+            <div id="passwordHelp" class="form-text">
+              Use 8+ characters with letters and numbers.
+            </div>
+            <div class="password-strength text-muted mt-1" id="pwStrength">Strength: —</div>
+            <div class="invalid-feedback">Please provide a password (minimum 8 characters).</div>
+          </div>
+
+          <!-- Submit -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Sign up</button>
+          </div>
+
+          <!-- Optional server message area -->
+          <div id="formMessage" class="mt-3" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bootstrap JS (Popper included) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (function () {
+      const form = document.getElementById('signupForm');
+      const password = document.getElementById('password');
+      const togglePwdBtn = document.getElementById('togglePassword');
+      const pwStrength = document.getElementById('pwStrength');
+      const formMessage = document.getElementById('formMessage');
+
+      // Toggle password visibility
+      togglePwdBtn.addEventListener('click', function () {
+        const isHidden = password.type === 'password';
+        password.type = isHidden ? 'text' : 'password';
+        togglePwdBtn.textContent = isHidden ? 'Hide' : 'Show';
+        togglePwdBtn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+      });
+
+      // Basic password strength hint
+      password.addEventListener('input', function () {
+        const val = password.value;
+        const tests = [
+          (v) => v.length >= 8,
+          (v) => /[A-Z]/.test(v),
+          (v) => /[0-9]/.test(v),
+          (v) => /[^A-Za-z0-9]/.test(v)
+        ];
+        const score = tests.reduce((s, fn) => s + (fn(val) ? 1 : 0), 0);
+        const labels = ['Very weak', 'Weak', 'Okay', 'Good', 'Strong'];
+        pwStrength.textContent = 'Strength: ' + labels[score];
+      });
+
+      // HTML5 validation + nice feedback
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Reset form message
+        formMessage.textContent = '';
+        formMessage.className = '';
+
+        if (!form.checkValidity()) {
+          form.classList.add('was-validated');
+          return;
+        }
+
+        // Example: show a simple success message and (optionally) perform AJAX submit
+        // Replace this with real POST to server or remove to use default form submit.
+        formMessage.textContent = 'Signing up...';
+        formMessage.className = 'text-muted';
+
+        // Example AJAX submission (uncomment and adapt if you want)
+        /*
+        const fd = new FormData(form);
+        fetch(form.action, {
+          method: 'POST',
+          body: fd,
+          credentials: 'same-origin' // include cookies if needed
+        }).then(r => r.json())
+          .then(data => {
+            // handle response
+            formMessage.textContent = data.message || 'Account created.';
+            formMessage.className = 'text-success';
+          }).catch(err => {
+            formMessage.textContent = 'There was an error.';
+            formMessage.className = 'text-danger';
+          });
+        */
+
+        // Fallback: just show success locally
+        setTimeout(() => {
+          formMessage.textContent = 'Account created (demo).';
+          formMessage.className = 'text-success';
+          //form.reset();
+          pwStrength.textContent = 'Strength: —';
+          form.classList.remove('was-validated');
+          form.submit();
+        }, 800);
+      }, false);
+    })();
+  </script>
+</body>
+</html>

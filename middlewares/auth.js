@@ -10,15 +10,22 @@ async function restrictToLoggedinUserOnly(req,res,next){
 	const user = await getUser(userUid);
 	
 	if(!user){
-		console.log(user);
 		return res.redirect('/login');
 	}
 	
 	req.user = user;
-	//console.log(req.user);
+	next();
+}
+
+async function checkAuth(req,res,next){
+	const userUid = req.cookies?.uid;
+	const user = await getUser(userUid);
+	
+	req.user = user;
 	next();
 }
 
 module.exports = {
-	restrictToLoggedinUserOnly
+	restrictToLoggedinUserOnly,
+	checkAuth
 };

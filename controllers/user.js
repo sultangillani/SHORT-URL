@@ -5,9 +5,9 @@ const {setUser} = require('../service/auth');
 async function handleUserSignup(req, res){
     const {name, email, password} = req.body;
     await User.create({
-        username: name,
-        user_email: email,
-        user_password: password
+        name,
+        email,
+        password
     });
 
     return res.redirect('/');
@@ -17,8 +17,8 @@ async function handleUserSignup(req, res){
 async function handleUserLogin(req, res){
     const {email, password} = req.body;
     const user = await User.findOne({
-        user_email: email,
-        user_password: password
+        email,
+        password
     });
 
     if(!user){

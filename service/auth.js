@@ -1,4 +1,5 @@
 
+const { setCurrentUser } = require('../globals');
 const jwt = require('jsonwebtoken');
 const secret = 'Sultan>123...';
 
@@ -12,6 +13,8 @@ function getUser(id){
 }*/
 
 function setUser(user){
+    //setCurrentUser(user); 
+
     return jwt.sign({
         _id: user._id,
         email: user.email,

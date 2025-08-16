@@ -1,4 +1,5 @@
 const {getUser} = require('../service/auth');
+const { setCurrentUser } = require('../globals');
 
 function restrictTo(roles=[]){
 	return function(req,res,next){
@@ -34,7 +35,9 @@ function checkForAuthentication(req,res,next){
 	}
 
 	const user = getUser(final_token);
+	setCurrentUser(user);
 	req.user = user;
+	
 	return next();
 }
 
